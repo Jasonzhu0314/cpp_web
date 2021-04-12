@@ -6,10 +6,11 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <iostream>
+#include <sstream>
 
-#define IP "127.0.0.1"//这个一定要用自己服务器的IP
+#define IP "172.24.174.37"  //这个一定要用自己服务器的IP
 #define port 8001 //监听端口，可以在范围内自由设定
-#define message "HTTP server is ready!"//返回给客户机的信息
+#define message "HTTP server is ready!"  //返回给客户机的信息
 
 using namespace std;
 
@@ -24,7 +25,8 @@ int main()
     struct sockaddr_in local_addr;
     //bzero(&local_addr, sizeof(local_addr));
     local_addr.sin_family = AF_INET;
-    local_addr.sin_addr.s_addr = inet_addr(IP);
+    //local_addr.sin_addr.s_addr = inet_addr(IP);
+    local_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     local_addr.sin_port = htons(port);
 
     int res = bind(local_socket, (struct sockaddr *)&local_addr, sizeof(local_addr));
@@ -50,16 +52,15 @@ int main()
         char *ip = inet_ntoa(client_addr.sin_addr);
         cout << "client: " << ip << "\nconnet sercer success" << endl;
 
-
         char buff[1024] = {0};
         int size = read(client_sock, buff, sizeof(buff));
         cout << "Request information:\n"
 			 << buff << endl;
 		cout << size << " bytes" << endl;
 
-        //write(client_sock, message, sizeof(message));
 
-        //close(client_sock);
+        write(client_sock, message, sizeof(message));
+        close(client_sock);
 
     }
     close(local_socket);
