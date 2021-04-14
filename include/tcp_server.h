@@ -14,5 +14,6 @@ private:
  
 public:
     tcp_server(int listen_port);
+    void process_client(int accept_fd);
     int recv_msg();
 };

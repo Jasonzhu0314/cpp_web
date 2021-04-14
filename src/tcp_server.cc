@@ -2,7 +2,7 @@
 #include <string.h>
 #include <cstdio>
 #include <stdlib.h>
-
+#include <thread>
 #include "tcp_server.h"
 
 tcp_server::tcp_server(int listen_port) {
@@ -37,35 +37,35 @@ int tcp_server::recv_msg() {
 			continue;
 		}
 		printf("Received a connection from %s\n",(char*) inet_ntoa(remote_addr.sin_addr));
+		printf("create a thead for process a client\n");
 
-		//if( !fork() ) {
-			// 父进程返回的是子进程的id，子进程返回的是0，父进程重新回到监听，子进程执行后续的操作
-			printf("son process\n");
-			char buffer[MAXSIZE];
-			memset(buffer,0,MAXSIZE);
-			printf("new buffer\n");
-			// 如果没有数据，则会一直等待下去，不超过长度的时候，有多少读多少，所以需要配合while使用，当超过最大的MAXSIZE的时候就会有问题
-			if( ( read(accept_fd, buffer, MAXSIZE)) < 0 ) {
-				throw("Read() error!");
-			} else {
-				printf("Received message: %s\n", buffer);
-				std::string first_line = "HTTP/1.0 200 OK\n";
- 				std::string body = "<html><div><h1>hello world</h1></div></html\n";
-				std::string header = "Content-Type: text/html\ncharset: gbk\nContent-Length:" + std::to_string(body.size())+"\n\n";
- 				std::string resp = first_line + header + body;
-				
-				for (int i = 0; i < resp.size(); i++) {
-					buffer[i] = resp[i];
-				}
-				// const char *a  = resp.c_str();
-				// std::cout << sizeof((*a)) << std::endl;
-				write(accept_fd, buffer, sizeof((buffer)));
-				
-				break;
-			}
-			exit(0);
-		//}
-		close(accept_fd);
+		// 创建子线程用户处理客户端发来的连接，否则，多个客户端连接时，同一时间，只能响应一个客户端
+		std::thread t(&tcp_server::process_client, this, std::ref(accept_fd));
+		t.detach(); // 与主线程分离
 	}
 	return 0;
+}
+
+
+void tcp_server::process_client(int accept_fd) {
+	char buffer[MAXSIZE];
+	memset(buffer,0,MAXSIZE);
+	// 如果没有数据，则会一直等待下去，不超过长度的时候，有多少读多少，所以需要配合while使用，当超过最大的MAXSIZE的时候就会有问题
+	if( (read(accept_fd, buffer, MAXSIZE)) < 0 ) {
+		throw("Read() error!");
+	} else {
+		printf("Received message: %s\n", buffer);
+		// html 界面
+		std::string first_line = "HTTP/1.0 200 OK\n";
+		std::string body = "<html><div><h1>hello world</h1></div></html\n";
+		std::string header = "Content-Type: text/html\ncharset: gbk\nContent-Length:" 
+							+ std::to_string(body.size())+"\n\n";
+		std::string resp = first_line + header + body;
+		
+		for (int i = 0; i < resp.size(); i++) {
+			buffer[i] = resp[i];
+		}
+
+		write(accept_fd, buffer, sizeof((buffer)));
+	}
 }

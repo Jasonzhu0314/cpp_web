@@ -30,24 +30,17 @@ tcp_client::tcp_client(char* server_ip, char* server_port)
 
     printf("send message to server: \n");  
     fgets(message, 4096, stdin);  
-
+    // 发送数据
     if (send(socket_fd, message, strlen(message), 0) < 0) {  
         printf("send message error\n");  
         exit(0);  
     }  
+
     char buffer[1024];
 	memset(buffer, 0, 1024);
     read(socket_fd, buffer, 1024);
     printf("%s\n", buffer);
 
-    // fgets(message, 4096, stdin);  
-    
-    // if (send(socket_fd, message, strlen(message), 0) < 0) {  
-    //     printf("send message error\n");  
-    //     exit(0);  
-    // } 
-
     close(socket_fd);  
-    exit(0);  
-  
+    exit(0);
 }  
