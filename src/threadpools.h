@@ -5,7 +5,8 @@
 #include <functional>
 #include <queue>
 #include <vector>
-
+#include <condition_variable>
+#include <deque>
 
 namespace zhuzs {
 
@@ -24,12 +25,17 @@ public:
     void start();
     void stop();
     void addTask(const Task&);
+    Task get();
     
 
 private:
     typedef std::vector<std::thread*> Threads;
-    Threads m_threads_;
+    Threads threads_;
     int thread_nums_;
+    bool is_started_;
+    std::mutex mutex_;
+    std::deque<Task> tasks_;
+    std::condition_variable cond_;
 
     void ThreadLoop();
 
