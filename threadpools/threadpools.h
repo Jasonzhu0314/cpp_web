@@ -8,9 +8,6 @@
 #include <condition_variable>
 #include <deque>
 
-namespace zhuzs {
-
-};
 
 class ThreadPool {
 public:

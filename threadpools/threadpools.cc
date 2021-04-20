@@ -52,17 +52,16 @@ void ThreadPool::addTask(const Task& task) {
 
 ThreadPool::Task ThreadPool::get() {
     std::unique_lock<std::mutex> lock(mutex_);
-    if (is_started_) {
-        cond_.wait(lock, [this]() -> bool {
-            if (!tasks_.empty() && is_started_)
-            {
-                return true;
-            }
-            return false;
-        });
+    while (tasks_.empty() && is_started_) {
+        cond_.wait(lock);
     }
-    Task task = tasks_.front();
-    tasks_.pop_front();
+
+    Task task = nullptr;
+    // 当调用stop时，队列中可能为空
+    if (!tasks_.empty()) {
+        tasks_.front();
+        tasks_.pop_front();
+    }
     return task;
 }
 

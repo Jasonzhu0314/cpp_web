@@ -6,7 +6,7 @@
 #include "tcp_server.h"
 
 tcp_server::tcp_server(int listen_port) {
-    if (( socket_fd = socket(AF_INET,SOCK_STREAM,IPPROTO_TCP)) < 0 ) {
+    if (( socket_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0 ) {
 		throw "socket() failed";
     }
 	printf("server socket fd: %d\n", socket_fd);
@@ -49,7 +49,7 @@ int tcp_server::recv_msg() {
 
 void tcp_server::process_client(int accept_fd) {
 	char buffer[MAXSIZE];
-	memset(buffer,0,MAXSIZE);
+	memset(buffer, 0, MAXSIZE);
 	// 如果没有数据，则会一直等待下去，不超过长度的时候，有多少读多少，所以需要配合while使用，当超过最大的MAXSIZE的时候就会有问题
 	if( (read(accept_fd, buffer, MAXSIZE)) < 0 ) {
 		throw("Read() error!");
