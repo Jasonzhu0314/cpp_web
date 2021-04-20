@@ -68,4 +68,5 @@ void tcp_server::process_client(int accept_fd) {
 
 		write(accept_fd, buffer, sizeof((buffer)));
 	}
+	printf("server  end connect\n");
 }

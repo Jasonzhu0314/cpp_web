@@ -12,11 +12,17 @@ c++服务器开发
 │   └── tcp_server.h    服务端类声明
 ├── makefile
 ├── README.md
-└── src
-    ├── main_client.cc  客户端main函数入口
-    ├── main_server.cc  服务端main函数入口
+├── main_client.cc  客户端main函数入口
+├── main_server.cc  服务端main函数入口
+├── threadpools
+│   ├── tcp_client.cc   客户端类定义
+│   ├── tcp_server.cc   服务端类定义
+│   ├── threadpools.cc  线程池类
+│   └── threadpools.h
+└── threads
     ├── tcp_client.cc   客户端类定义
     └── tcp_server.cc   服务端类定义
+
 ```
 ## socket 缓冲区工作机制
 
@@ -41,6 +47,15 @@ c++服务器开发
 
 缺点：每当一个客户端请求连接时，就创建一个线程，关闭时，销毁线程，当处于高并发时，频繁的创建和销毁线程，影响效率
 
+```
+编译：
+make all type=src thread=-lpthread
+运行服务端：
+./bin/server Port
+运行客户端：
+./bin/client IP Port
+```
+
 ### 线程池
 为了解决频繁的创建和销毁线程带来的时间消耗
 使用线程池创建多个线程，处于wait状态，当有新的任务被放到任务队列时，线程池中的线程被唤醒，处理客户端请求，当处理完成后，线程回到线程池中，处于等待状态
@@ -61,6 +76,16 @@ c++服务器开发
 软中断 cpu
 硬中断
 硬件发生的中断，任意时间，异步中断
+
+
+## 用户态到内核态的切换
+当用户需要调用内核的代码是，比如说，向屏幕打印输出printf，从缓冲区中读取数据read等函数，实际下面使用的内核封装好的函数，
+内核函数
+strace命令可以追踪程序的执行状态，包括线程的创建等
+```
+strace -ff -o log ./bin/server 6001
+# -ff 命令有进程的跟踪结果输出到相应的filename.pid中,pid是各进程的进程号
+```
 
 ## 参考文献
 Unix网络编程1 API：可以查看socket的具体的函数的部分
