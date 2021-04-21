@@ -70,3 +70,11 @@ void tcp_server::process_client(int accept_fd) {
 	}
 	printf("server  end connect\n");
 }
+
+
+int main(int argc,char* argv[])
+{
+	tcp_server ts(atoi(argv[1]));
+	ts.recv_msg();
+	return 0;
+}

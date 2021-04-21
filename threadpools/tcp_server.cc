@@ -1,10 +1,8 @@
-
 #include <string.h>
 #include <cstdio>
 #include <stdlib.h>
 #include <thread>
 #include "tcp_server.h"
-#include "threadpools.h"
 
 tcp_server::tcp_server(int listen_port) {
     if (( socket_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0 ) {
@@ -27,9 +25,7 @@ tcp_server::tcp_server(int listen_port) {
 		throw "listen() failed";
 	}
 
-	// 创建线程池和线程池中的线程数
-	ThreadPool thread_pools(10);
-	thread_pools.start();
+
 }
  
 int tcp_server::recv_msg() {
@@ -46,6 +42,7 @@ int tcp_server::recv_msg() {
 
 		// 创建子线程用户处理客户端发来的连接，否则，多个客户端连接时，同一时间，只能响应一个客户端
 		std::thread t(&tcp_server::process_client, this, std::ref(accept_fd));
+		
 		
 		t.detach(); // 与主线程分离
 	}
@@ -75,3 +72,14 @@ void tcp_server::process_client(int accept_fd) {
 		write(accept_fd, buffer, sizeof((buffer)));
 	}
 }
+
+
+
+int main(int argc,char* argv[])
+{
+	tcp_server ts(atoi(argv[1]));
+	ts.recv_msg();
+	return 0;
+}
+
+

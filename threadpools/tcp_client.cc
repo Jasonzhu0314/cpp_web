@@ -44,3 +44,9 @@ tcp_client::tcp_client(char* server_ip, char* server_port)
     close(socket_fd);  
     exit(0);
 }  
+  
+int main(int argc,char* argv[])  
+{  
+    tcp_client tc(argv[1],argv[2]);  
+    return 0;  
+}
