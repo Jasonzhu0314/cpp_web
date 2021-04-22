@@ -4,7 +4,7 @@
 #include <thread>
 #include "tcp_server.h"
 
-tcp_server::tcp_server(int listen_port) {
+tcp_server::tcp_server(int listen_port, int num) {
     if (( socket_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0 ) {
 		throw "socket() failed";
     }
@@ -25,6 +25,7 @@ tcp_server::tcp_server(int listen_port) {
 		throw "listen() failed";
 	}
 
+	thread_pools = new ThreadPool(num);
 
 }
  

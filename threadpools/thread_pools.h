@@ -23,13 +23,16 @@ public:
     void stop();
     void addTask(const Task&);
     Task get();
+    int thread_nums_;
     
 
 private:
+    bool is_started_;
+
     typedef std::vector<std::thread*> Threads;
     Threads threads_;
-    int thread_nums_;
-    bool is_started_;
+    
+    
     std::mutex mutex_;
     std::deque<Task> tasks_;
     std::condition_variable cond_;

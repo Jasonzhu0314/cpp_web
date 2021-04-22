@@ -1,10 +1,13 @@
-#include "threadpools.h"
+#include "thread_pools.h"
 
 
 ThreadPool::ThreadPool(int num):
-            thread_nums_(num),
-            is_started_(false)
+            thread_nums_(num)
 {
+    
+}
+
+ThreadPool::ThreadPool() {
 
 }
 
@@ -18,7 +21,7 @@ void ThreadPool::start() {
     is_started_ = true;
     threads_.reserve(thread_nums_);
     for (int i = 0; i < thread_nums_; i++) {
-        threads_.push_back(new std::thread(ThreadPool::ThreadLoop, this));
+        threads_.push_back(new std::thread(&ThreadPool::ThreadLoop, this));
     }
 }
 void ThreadPool::ThreadLoop() {
