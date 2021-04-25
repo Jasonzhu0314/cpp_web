@@ -9,10 +9,13 @@
 #include <deque>
 
 
+const int kthread_nums = 3;
+
 class ThreadPool {
 public:
-    typedef std::function<void()> Task;
-    
+    //typedef std::function<void(int)> Task;
+    typedef void (*Task) (int a);
+
     ThreadPool();
     ThreadPool(int num);
     ThreadPool(const ThreadPool &thread_pool) = delete;
@@ -21,10 +24,9 @@ public:
 
     void start();
     void stop();
-    void addTask(const Task&);
-    Task get();
+    void addTask(const Task&, int );
+    Task getTask(int&);
     int thread_nums_;
-    
 
 private:
     bool is_started_;
@@ -32,9 +34,9 @@ private:
     typedef std::vector<std::thread*> Threads;
     Threads threads_;
     
-    
     std::mutex mutex_;
     std::deque<Task> tasks_;
+    std::deque<int> accept_list_;
     std::condition_variable cond_;
 
     void ThreadLoop();

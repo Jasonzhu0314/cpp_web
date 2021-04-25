@@ -1,27 +1,23 @@
 # cpp_web
 c++服务器开发
 
-实现一个简单的socket接口编程，服务端向客户端返回网页，使用套接口中常用的函数进行编程开发，提高自己对多线程编程和服务器开发的认识
+实现一个简单的socket接口编程，服务端向客户端返回网页，使用套接口中常用的函数进行编程开发，提高自己对多线程编程和服务器开发的认识，以及如何使用多路复用技术提高程序的性能
 
 ## 项目目录
 ```
 .
-├── bin 
-├── include
-│   ├── tcp_client.h    客户端类声明
-│   └── tcp_server.h    服务端类声明
-├── makefile
-├── README.md
-├── main_client.cc  客户端main函数入口
-├── main_server.cc  服务端main函数入口
+├── Makefile       编译文件
+├── README.md      Readme
 ├── threadpools
-│   ├── tcp_client.cc   客户端类定义
-│   ├── tcp_server.cc   服务端类定义
+│   ├── Makefile   线程池Makefile
+│   ├── tcp_client.cc   客户端
+│   ├── tcp_server.cc   服务端
 │   ├── threadpools.cc  线程池类
 │   └── threadpools.h
 └── threads
-    ├── tcp_client.cc   客户端类定义
-    └── tcp_server.cc   服务端类定义
+    ├── Makefile   多线程Makefile
+    ├── tcp_client.cc   客户端
+    └── tcp_server.cc   服务端
 
 ```
 ## socket 缓冲区工作机制
@@ -30,38 +26,29 @@ c++服务器开发
 
 ## 多客户端处理
 为了处理多个客户端的连接服务端，使用以下方式进行处理
-
 ### I/O阻塞
 BIO （block）
-每线程，每连接，每个连接中都阻塞，服务器阻塞在accept，线程阻塞在read，
-NIO（nonblocking）
-
-多路复用器(select, poll, epoll) 同步
-
-### 多个子线程
+每线程，每连接，每个连接中都阻塞，服务器阻塞在accept，线程阻塞在read
+#### 多个子线程
 每当有一个新的客户端连接到服务端是，创建一个新的子线程处理客户端的连接，服务端则可以继续等待其他新的客户端连接
 ```c++
 (1) 服务端等待accept，阻塞线程
 (2) 客户端连接，服务端创建子线程处理
 (3) 服务端回到步骤(1)，继续执行
 ```
-优点：解决只能连接一个客户端的情况，可以同时连接多个客户端
-
-缺点：
-
+- 优点：解决只能连接一个客户端的情况，可以同时连接多个客户端
+- 缺点：
 （1）每加入一台客户端需要一个IO线程阻塞等待对方数据传送，会导致服务器不断开启线程，但这些线程大部分时间都是阻塞在那里，浪费资源，并且支持不了大并发
-
 （2）每当一个客户端请求连接时，就创建一个线程，关闭时，销毁线程，当处于高并发时，频繁的创建和销毁线程，影响效率
-```
+```shell
 编译：
-make all type=src thread=-lpthread
-运行服务端：
-./bin/server Port
-运行客户端：
-./bin/client IP Port
+make all SUBDIR=threads
+# 运行服务端：
+./threads/server Port
+# 运行客户端：
+./threads/client IP Port
 ```
-
-### 线程池
+#### 线程池
 为了解决频繁的创建和销毁线程带来的时间消耗
 使用线程池创建多个线程，处于wait状态，当有新的任务被放到任务队列时，线程池中的线程被唤醒，处理客户端请求，当处理完成后，线程回到线程池中，处于等待状态
 ```
@@ -69,15 +56,24 @@ make all type=src thread=-lpthread
 (2) 客户端发起连接，主线程将任务添加到任务队列，并调用notify，唤醒线程池中的空闲的子线程，处理任务
 (3) 主线程等待新的连接，一旦有连接跳转到(2)处理
 ```
-
 缺点：线程的上下文切换仍然会导致程序的时间消耗
+```shell
+# 编译：
+make all SUBDIR=threadpools
+# 运行服务端：
+./threadpools/server Port
+# 运行客户端：
+./threadpools/client IP Port
+```
 
 
+### NIO（nonblocking）
 
-### epoll
+多路复用器(select, poll, epoll) 同步
 
+#### select
 
-
+#### epoll
 
 ## 中断
 软中断 cpu

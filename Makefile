@@ -1,5 +1,5 @@
 CC=g++
-SUBDIR=$(subdir)
+SUBDIR=threads
 
 .PHONY: clean, all
 

@@ -1,7 +1,4 @@
 CC=g++
-SRC=$(type)
-THREAD=$(thread)
-
 
 .PHONY: clean, tcp_client, tcp_server, all
 

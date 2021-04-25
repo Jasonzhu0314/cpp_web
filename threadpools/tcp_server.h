@@ -5,7 +5,9 @@
 #include "thread_pools.h"
  
 #define MAXSIZE 1024
- 
+
+void processClient(int);
+
 class tcp_server
 {
 private:
@@ -15,9 +17,8 @@ private:
     // 创建线程池和线程池中的线程数
 	ThreadPool* thread_pools;
 
-
 public:
     tcp_server(int listen_port, int num);
-    void process_client(int accept_fd);
-    int recv_msg();
+    ~tcp_server();
+    int recvMessage();
 };
