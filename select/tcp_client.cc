@@ -12,7 +12,7 @@
 tcp_client::tcp_client(char* server_ip, char* server_port)  
 {  
     if ((socket_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
-        //指定期望的通信协议类型，返回的文件描述符和套接字描述符类似，我们成为套接字描述符，简称sockfd
+        // 指定期望的通信协议类型，返回的文件描述符和套接字描述符类似，我们成为套接字描述符，简称sockfd
         PRR_EXIT("create socket")  
     }  
 
@@ -51,6 +51,17 @@ tcp_client::tcp_client(char* server_ip, char* server_port)
         } 
     }
     close(socket_fd);  
+    // TODO: shutdown函数能只关闭读缓存或写缓存中的一个
+    //    if ((n = read(socket_fd, message, n))) {
+    //        PRR_EXIT("fin read from server");
+    //    }
+    //    if (n == 0) {
+    //        write(1, "server fin", 10);
+    //        //break;
+    //    }
+    //    if ((n = write(STDOUT_FILENO, message, n)) < 0) {
+    //        PRR_EXIT("write to stdout");
+    //    } 
 }  
 
 int main(int argc,char* argv[])  

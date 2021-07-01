@@ -11,7 +11,8 @@ tcp_server::tcp_server(int listen_port) {
 
 	memset(&myserver, 0, sizeof(myserver));
 	myserver.sin_family = AF_INET;
-	myserver.sin_addr.s_addr = htonl(INADDR_ANY);
+	//myserver.sin_addr.s_addr = htonl(INADDR_ANY);
+	inet_aton("127.0.0.1", &myserver.sin_addr);
 	myserver.sin_port = htons(listen_port);
 
 	if (bind(socket_fd, (sockaddr*) &myserver, sizeof(myserver)) < 0 ) {
@@ -83,7 +84,9 @@ tcp_server::tcp_server(int listen_port) {
 				if (FD_ISSET(accept_fd, &read_set)) {
 					n = read(accept_fd, buf, MAXSIZE);
 					if (n == 0) {
-						// 没有数据，证明socket口关闭，否则下一轮会报错
+						// 没有数据，证明socket口关闭，要将标记位清除，否者select返回为1
+						// write(accept_fd, "byebye", 6);
+						// sleep(2);
 						close(accept_fd);
 						FD_CLR(accept_fd, &all_set);
 						printf("closed client: %d \n", i);
