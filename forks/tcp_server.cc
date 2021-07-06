@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include "tcp_server.h"
-#include "../wrap.h"
+#include "wrap.h"
 
 #define MAX_CONNECT_NUMS 4
 
@@ -33,7 +33,7 @@ int tcp_server::recv_msg() {
 		if (pid < 0)  perr_exit("fork");
 		if (pid > 0) {
 			close(accept_fd); // 父进程不需要客户端文件描述符
-			while(waitpid(-1, NULL, WNOHANG) > 0); // 非阻塞收尸
+			while(waitpid(-1, NULL, WNOHANG) > 0); // 非阻塞收尸，防止僵尸进程
 			continue;
 		}
 		// 创建子进程处理客户端连接，否则，多个客户端连接时，同一时间，只能响应一个客户端
@@ -60,7 +60,7 @@ void tcp_server::process_client(int accept_fd) {
 		Write(accept_fd, buf, n);
 	}
 	// TODO:不超过长度的时候，有多少读多少，当超过最大的MAXSIZE的时候处理机制
-	printf("server  end connect\n");
+	printf("server  end connect, fd:%d\n, accept_fd");
 	close(accept_fd);
 }
 
