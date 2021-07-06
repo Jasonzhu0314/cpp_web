@@ -60,7 +60,7 @@ void tcp_server::process_client(int accept_fd) {
 		Write(accept_fd, buf, n);
 	}
 	// TODO:不超过长度的时候，有多少读多少，当超过最大的MAXSIZE的时候处理机制
-	printf("server end connect, fd:%u\n", accept_fd);
+	printf("server  end connect, fd:%d\n, accept_fd");
 	close(accept_fd);
 }
 
