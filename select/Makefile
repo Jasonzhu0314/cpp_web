@@ -3,9 +3,9 @@ CC=g++
 .PHONY: clean, tcp_client, tcp_server, all
 
 client:
-	$(CC) ./tcp_client.cc -I ./ -o ./client --std=c++11
+	$(CC) tcp_client.cc ../wrap/wrap.c -I ../wrap/ -o client  
 server:
-	$(CC) ./tcp_server.cc -I ./ -o ./server -lpthread --std=c++11
+	$(CC) tcp_server.cc ../wrap/wrap.c -I ../wrap/  -o server 
 
 all: client server	
 	@echo "make client && make server"
