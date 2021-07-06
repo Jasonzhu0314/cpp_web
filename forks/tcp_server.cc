@@ -33,7 +33,7 @@ int tcp_server::recv_msg() {
 		if (pid < 0)  perr_exit("fork");
 		if (pid > 0) {
 			close(accept_fd); // 父进程不需要客户端文件描述符
-			while(waitpid(-1, NULL, WNOHANG) < 0) {}; // 非阻塞收尸
+			while(waitpid(-1, NULL, WNOHANG) > 0); // 非阻塞收尸
 			continue;
 		}
 		// 创建子进程处理客户端连接，否则，多个客户端连接时，同一时间，只能响应一个客户端

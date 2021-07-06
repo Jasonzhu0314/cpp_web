@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tcp_client.h"  
-#include "../wrap.h"
+#include "wrap.h"
 
 tcp_client::tcp_client(char* server_ip, char* server_port)  
 {  
